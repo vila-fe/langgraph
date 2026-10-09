@@ -18,26 +18,28 @@ Other pytest arguments can also be supplied inside the `TEST` variable.
 
 ## Libraries
 
-The repository contains several Python and JavaScript/TypeScript libraries.
+The repository contains several Python libraries. The JS/TS SDK now lives in
+[langchain-ai/langgraphjs](https://github.com/langchain-ai/langgraphjs); `libs/sdk-js` only holds a pointer README.
 Below is a high-level overview:
 
 - **checkpoint** – base interfaces for LangGraph checkpointers.
 - **checkpoint-postgres** – Postgres implementation of the checkpoint saver.
 - **checkpoint-sqlite** – SQLite implementation of the checkpoint saver.
+- **checkpoint-conformance** – conformance test suite for checkpointer implementations.
 - **cli** – official command-line interface for LangGraph.
 - **langgraph** – core framework for building stateful, multi-actor agents.
 - **prebuilt** – high-level APIs for creating and running agents and tools.
-- **sdk-js** – JS/TS SDK for interacting with the LangGraph REST API.
 - **sdk-py** – Python SDK for the LangGraph Server API.
 
 ### Dependency map
 
 The diagram below lists downstream libraries for each production dependency as
-declared in that library's `pyproject.toml` (or `package.json`).
+declared in that library's `pyproject.toml`.
 
 ```text
 checkpoint
 ├── checkpoint-postgres
+├── checkpoint-conformance
 ├── checkpoint-sqlite
 ├── prebuilt
 └── langgraph
@@ -48,8 +50,6 @@ prebuilt
 sdk-py
 ├── langgraph
 └── cli
-
-sdk-js (standalone)
 ```
 
 Changes to a library may impact all of its dependents shown above.

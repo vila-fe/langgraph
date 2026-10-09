@@ -6,6 +6,7 @@ import tempfile
 import textwrap
 from contextlib import contextmanager
 from pathlib import Path
+from unittest.mock import patch
 
 import click
 from click.testing import CliRunner
@@ -798,16 +799,21 @@ def test_dockerfile_command_with_docker_compose() -> None:
         agent_path.parent.mkdir(parents=True, exist_ok=True)
         agent_path.touch()
 
-        result = runner.invoke(
-            cli,
-            [
-                "dockerfile",
-                str(save_path),
-                "--config",
-                str(temp_dir / "config.json"),
-                "--add-docker-compose",
-            ],
-        )
+        # `check_capabilities` shells out to `docker info`; don't require a daemon.
+        with patch(
+            "langgraph_cli.docker.check_capabilities",
+            return_value=DEFAULT_DOCKER_CAPABILITIES,
+        ):
+            result = runner.invoke(
+                cli,
+                [
+                    "dockerfile",
+                    str(save_path),
+                    "--config",
+                    str(temp_dir / "config.json"),
+                    "--add-docker-compose",
+                ],
+            )
 
         # Assert command was successful
         assert result.exit_code == 0
@@ -963,6 +969,7 @@ def test_build_generate_proper_build_context():
                     "test-image",
                     "--config",
                     str(temp_dir / "config.json"),
+                    "--no-pull",  # Avoid pulling images from a real Docker daemon
                 ],
                 catch_exceptions=True,
             )
